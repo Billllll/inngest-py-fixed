@@ -1,45 +1,35 @@
 [project]
-name = "inngest-py"
-version = "0.0.0"
+name = "inngest"
+version = "0.4.22"
 authors = [{ name = "Inngest Inc.", email = "hello@inngest.com" }]
 description = "Python SDK for Inngest"
 readme = "README.md"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Framework :: Django",
+    "Framework :: FastAPI",
+    "Framework :: Flask",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
 requires-python = ">=3.10"
 
-[project.optional-dependencies]
-extra = [
-    "Django==5.0",
-    "Flask==3.0.0",
-    "boto3-stubs[s3]==1.35.46",
-    "boto3==1.35.47",
-    "build==1.0.3",
-    "cryptography==42.0.5",
-    "django-types==0.19.1",
-    "fastapi==0.110.0",
-    "moto[s3,server]==5.0.18",
-    "mypy==1.10.0",
-    "pynacl==1.5.0",
-    "pytest==8.3.4",
-    "pytest-django==4.7.0",
-    "pytest-timeout==2.3.1",
-    "pytest-xdist[psutil]==3.3.1",
-    "ruff==0.9.5",
-    "sentry-sdk==2.1.1",
-    "structlog==25.2.0",
-    "toml==0.10.2",
-    "tornado==6.4",
-    "types-protobuf==5.29.1.20250315",
-    "types-psutil==7.0.0.20250401",
-    "types-toml==0.10.8.7",
-    "types-tornado==5.1.1",
-    "uvicorn==0.23.2",
-
-    # Werkzeug v3.1 deleted something that breaks our minimum Flask version
-    # (v2.3.0). So for now, only allow Werkzeug versions below v3.1. See this PR
-    # for the deleted thing: https://github.com/pallets/werkzeug/pull/2967
-    # "werkzeug<3.1",
+dependencies = [
+    "httpx>=0.26.0",
+    "jcs>=0.2.1",
+    "pydantic>=2.11.0",
+    "typing-extensions>=4.13.0",
 ]
+
+[project.optional-dependencies]
+connect = ["protobuf>=5.29.4", "psutil>=6.0.0", "websockets>=15.0.0"]
 
 [project.urls]
 "Homepage" = "https://github.com/inngest/inngest-py"
 "Bug Tracker" = "https://github.com/inngest/inngest-py/issues"
+
+[tool.setuptools.package-data]
+# Makes py.typed appear when users install the inngest package.
+inngest = ["py.typed"]

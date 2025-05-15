@@ -1,41 +1,35 @@
+.PHONY: build
+build:
+	@if [ -d "dist" ]; then rm -rf dist; fi
+	@python -m build
+
+.PHONY: check-venv
 check-venv:
 	@if [ -z "$${CI}" ] && [ -z "$${VIRTUAL_ENV}" ]; then \
 		echo "virtual environment is not activated"; \
 		exit 1; \
 	fi
 
-format: check-venv
-	@ruff format .
-
-format-check: check-venv
-	@ruff format --check .
-
-install: check-venv
-	@pip install \
-		-e '.[extra]' \
-		-e ./pkg/inngest[connect] \
-		-e ./pkg/inngest_encryption \
-		-e ./pkg/test_core \
-		-c constraints.txt
-
+.PHONY: itest
 itest: check-venv
-	@cd pkg/inngest && make itest
-	@cd pkg/inngest_encryption && make itest
+	@cd ../../tests/test_inngest && pytest -n 4 -v .
 
-pre-commit: format-check lint type-check utest
-
+.PHONY: lint
 lint: check-venv
-	@cd examples && make lint
-	@cd pkg/inngest && make lint
-	@cd pkg/inngest_encryption && make lint
-	@cd pkg/test_core && make lint
+	@ruff check .
 
+.PHONY: proto
+proto:
+	@protoc --proto_path=./inngest/experimental/connect/ --python_out=./inngest/experimental/connect/ ./inngest/experimental/connect/connect.proto --pyi_out=./inngest/experimental/connect/
+
+
+release:
+	@grep "version = \"$${VERSION}\"" pyproject.toml && git tag inngest@$${VERSION} && git push origin inngest@$${VERSION} || echo "pyproject.toml version does not match"
+
+.PHONY: type-check
 type-check: check-venv
-	@cd examples && make type-check
-	@cd pkg/inngest && make type-check
-	@cd pkg/inngest_encryption && make type-check
-	@cd pkg/test_core && make type-check
+	@mypy --config-file=../../mypy.ini .
 
+.PHONY: utest
 utest: check-venv
-	@cd pkg/inngest && make utest
-	@cd pkg/inngest_encryption && make utest
+	@pytest -v inngest
