@@ -22,9 +22,7 @@ def hash_event_key(key: str) -> str:
 
 
 def hash_signing_key(key: str) -> str:
-    return hashlib.sha256(
-        bytearray.fromhex(remove_signing_key_prefix(key))
-    ).hexdigest()
+    return hashlib.sha256(key.encode("utf-8")).hexdigest()
 
 
 def hash_step_id(step_id: str) -> str:
